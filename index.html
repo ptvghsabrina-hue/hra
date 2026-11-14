@@ -24,7 +24,19 @@
     ref: document.referrer
   });
 
-  try { fetch(LOG + '?' + data, { mode: 'no-cors', keepalive: true }); } catch (e) {}
+  // 同一個瀏覽器、同一個來源，30 分鐘內重複開啟只記一次（重新整理、上一頁、重複點都不重算）
+  const WINDOW_MS = 30 * 60 * 1000;
+  const key = 'last_' + data.get('src');
+  let skip = false;
+  try {
+    const last = Number(localStorage.getItem(key) || 0);
+    skip = Date.now() - last < WINDOW_MS;
+    if (!skip) localStorage.setItem(key, String(Date.now()));
+  } catch (e) {}
+
+  if (!skip) {
+    try { fetch(LOG + '?' + data, { mode: 'no-cors', keepalive: true }); } catch (e) {}
+  }
   setTimeout(function () { location.replace(TARGET); }, 300);
 </script>
 <style>body{font-family:system-ui,sans-serif;background:#fff;color:#222;padding:24px 16px;line-height:1.6}</style>
