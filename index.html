@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>前往健康風險評估…</title>
+<script>
+  const LOG = 'https://script.google.com/macros/s/AKfycbzlxOL0Oqrj3bgu_ftapSzrfbAoAq4I9bVFWG8LOTXqmp6rJbKg7zyWnJN7Kl6Pg_59/exec';
+  const TARGET = 'https://cdrc.hpa.gov.tw/hra-openservice-menupage.jsp?all';
+
+  let vid = '';
+  try {
+    vid = localStorage.getItem('vid') || '';
+    if (!vid) { vid = Math.random().toString(36).slice(2, 10); localStorage.setItem('vid', vid); }
+  } catch (e) {}
+
+  const q = new URLSearchParams(location.search);
+  const data = new URLSearchParams({
+    src: q.get('src') || 'direct',
+    cmp: q.get('cmp') || '',
+    vid: vid,
+    dev: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? '手機' : '電腦',
+    ref: document.referrer
+  });
+
+  try { fetch(LOG + '?' + data, { mode: 'no-cors', keepalive: true }); } catch (e) {}
+  setTimeout(function () { location.replace(TARGET); }, 300);
+</script>
+<style>body{font-family:system-ui,sans-serif;background:#fff;color:#222;padding:24px 16px;line-height:1.6}</style>
+</head>
+<body>
+  <p>正在前往國健署健康風險評估頁面…<br>
+  若沒有自動跳轉，請<a href="https://cdrc.hpa.gov.tw/hra-openservice-menupage.jsp?all">點此前往</a>。</p>
+</body>
+</html>
