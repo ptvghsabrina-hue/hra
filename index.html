@@ -27,8 +27,9 @@
   // 同一個瀏覽器、同一個來源，30 分鐘內重複開啟只記一次（重新整理、上一頁、重複點都不重算）
   const WINDOW_MS = 30 * 60 * 1000;
   const key = 'last_' + data.get('src');
-  let skip = false;
-  try {
+  // 沒帶 ?src= 的不記錄（推廣連結都有帶 src；直接開網址多半是測試、預覽或機器人）
+  let skip = !q.get('src');
+  if (!skip) try {
     const last = Number(localStorage.getItem(key) || 0);
     skip = Date.now() - last < WINDOW_MS;
     if (!skip) localStorage.setItem(key, String(Date.now()));
